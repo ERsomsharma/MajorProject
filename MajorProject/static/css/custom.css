@@ -1,0 +1,45 @@
+/* hide radio buttons */
+.rate > input {
+    display: none;
+}
+
+.rate {
+    display: inline-block;
+    border: 0; 
+}
+
+.rate > label {
+    float: right;
+}
+
+/* showing the stars */
+
+.rate > label:before {
+    display: inline-block;
+    font-size: 1.1rem;
+    font-family: FontAwesome;
+    content: "\f005"; /* Unicode star character */
+    margin: 0;
+    padding: 0.3rem .2rem;
+}
+
+/* half star */
+.rate > .half:before {
+    content: "\f089"; /* Unicode half star character */
+    position: absolute;
+    padding-right: 0;
+}
+
+/* click and hover */
+input:checked ~ label, label:hover ~ label{
+    color: #ffca08;
+}
+
+/* hover highlight */
+input:checked + label:hover, input:checked ~ label:hover, input:checked ~ label:hover ~ label, label:hover ~ input:checked ~ label {
+    color: #cc9000;
+}
+
+.rating-star i{
+    color: #ffca08 !important;
+}

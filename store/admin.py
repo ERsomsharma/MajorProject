@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product, Variation
+from .models import Product, Variation, ReviewRating
 
 # Register your models here.
 
@@ -14,3 +14,10 @@ class VariationAdmin(admin.ModelAdmin):
     list_filter = ('product', 'variation_category','variation_value' ,'is_active')
     list_editable = ('is_active',)
 admin.site.register(Variation, VariationAdmin)
+
+class ReviewRatingAdmin(admin.ModelAdmin):
+    list_display = ('product', 'user', 'subject', 'rating', 'status', 'created_at')
+    list_filter = ('status', 'created_at')
+    search_fields = ('product__product_name', 'user__first_name', 'subject', 'review')
+    list_editable = ('status',)
+admin.site.register(ReviewRating, ReviewRatingAdmin)
