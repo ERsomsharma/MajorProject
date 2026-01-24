@@ -12,7 +12,7 @@
 				<div class="card">
 					<div class="card-body">
 						<h4 class="card-title mb-4">Billing Address</h4>
-						<form action="" method="post">
+						<form action="{% url 'place_order' %}" method="post">
 							{% csrf_token %}
 							<div class="form-row">
 								<div class="col form-group">
@@ -22,6 +22,16 @@
 								<div class="col form-group">
 									<label for="lname">Last Name</label>
 									<input type="text" name="last_name" class="form-control" required id="lname">
+								</div>
+							</div>
+							<div class="form-row">
+								<div class="col form-group">
+									<label for="phone">Phone</label>
+									<input type="text" name="phone" class="form-control" required id="phone">
+								</div>
+								<div class="col form-group">
+									<label for="email">Email</label>
+									<input type="email" name="email" class="form-control" required id="email">
 								</div>
 							</div>
 							<div class="form-row">
@@ -46,6 +56,10 @@
 								<div class="col form-group">
 									<label for="country">Country</label>
 									<input type="text" name="country" class="form-control" required id="country">
+								</div>
+								<div class="col form-group">
+									<label for="pincode">Pincode</label>
+									<input type="text" name="pincode" class="form-control" required id="pincode">
 								</div>
 							</div>
 							<div class="form-row ">
@@ -104,11 +118,26 @@
 
 							</tbody>
 						</table>
-						<button class="btn btn-primary btn-block" name="submit" type="submit">Place Order</button>
+
+						<dl class="dlist-align">
+							<dt>Total price:</dt>
+							<dd class="text-right">${{ total }}</dd>
+						</dl>
+						<dl class="dlist-align">
+							<dt>Tax:</dt>
+							<dd class="text-right">${{ tax }}</dd>
+						</dl>
+						<dl class="dlist-align">
+							<dt>Grand Total:</dt>
+							<dd class="text-right text-dark b"><strong>${{ grand_total }}</strong></dd>
+						</dl>
+
+						<button class="btn btn-primary btn-block" name="submit" type="submit" id="submit">Place Order</button>
 						<a href="{% url 'store' %}" class="btn btn-light btn-block">Continue Shopping</a>
+						</form>
 					</div> <!-- card-body.// -->
 				</div> <!-- card.// -->
-						</form>
+						
 
 			</aside> <!-- col.// -->
 

@@ -3,9 +3,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Verify Your Email</title>
+    <title>Verify Your Email Address</title>
 </head>
 <body style="margin:0; padding:0; background-color:#f4f6f8; font-family:Arial, Helvetica, sans-serif;">
+
+<!-- Preheader (hidden preview text) -->
+<div style="display:none; max-height:0; overflow:hidden; opacity:0;">
+    Please verify your email to activate your account.
+</div>
 
 <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f6f8; padding:16px 0;">
     <tr>
@@ -17,11 +22,16 @@
                           border-radius:10px; padding:24px;
                           box-shadow:0 6px 16px rgba(0,0,0,0.08);">
 
+                <!-- Brand Accent -->
+                <tr>
+                    <td style="height:4px; background-color:#2563eb; border-radius:10px 10px 0 0;"></td>
+                </tr>
+
                 <!-- Header -->
                 <tr>
-                    <td align="center" style="padding-bottom:18px;">
+                    <td align="center" style="padding:18px 0;">
                         <h2 style="margin:0; font-size:22px; color:#1f2937;">
-                            🎉 Verify Your Email
+                            🎉 Verify Your Email Address
                         </h2>
                     </td>
                 </tr>
@@ -30,12 +40,23 @@
                 <tr>
                     <td style="font-size:16px; color:#374151; line-height:1.7;">
                         <p style="margin:0 0 12px 0;">
-                            Hi <strong>{{ user.get_full_name|default:user.email }}</strong>,
+                            Hi <strong>{{ user.first_name|default:user.email }}</strong>,
                         </p>
 
                         <p style="margin:0 0 16px 0;">
-                            Thanks for registering! Please confirm your email address to activate your account.
+                            Welcome! Thanks for signing up. Please verify your email address to activate your account and get started.
                         </p>
+                    </td>
+                </tr>
+
+                <!-- Why Verify -->
+                <tr>
+                    <td style="font-size:15px; color:#374151; line-height:1.7;">
+                        <ul style="padding-left:18px; margin:0 0 16px 0;">
+                            <li>Secure your account</li>
+                            <li>Get full access to all features</li>
+                            <li>Receive important updates and notifications</li>
+                        </ul>
                     </td>
                 </tr>
 
@@ -61,11 +82,18 @@
                     </td>
                 </tr>
 
+                <!-- Safety Text -->
+                <tr>
+                    <td align="center" style="font-size:13px; color:#6b7280;">
+                        This link is unique to your account and should not be shared.
+                    </td>
+                </tr>
+
                 <!-- Fallback -->
                 <tr>
-                    <td style="font-size:14px; color:#4b5563; line-height:1.6;">
+                    <td style="font-size:14px; color:#4b5563; line-height:1.6; padding-top:16px;">
                         <p style="margin:0 0 6px 0;">
-                            Button not working? Copy and paste this link:
+                            Having trouble clicking the button? Copy and paste this link into your browser:
                         </p>
                         <p style="word-break:break-all; color:#2563eb;">
                             {{ protocol }}://{{ domain }}{% url 'activate' uid token %}
@@ -84,8 +112,8 @@
                         color:#92400e;
                         line-height:1.5;
                     ">
-                        ⏰ <strong>Important:</strong>  
-                        This verification link will expire for security reasons.
+                        ⏰ <strong>Link expires soon</strong><br>
+                        For your security, this verification link will expire in 24 hours.
                     </td>
                 </tr>
 
@@ -93,7 +121,7 @@
                 <tr>
                     <td style="padding-top:24px; font-size:13px; color:#6b7280; text-align:center;">
                         <p style="margin:0;">
-                            If you didn’t create this account, you can ignore this email.
+                            If you didn’t create an account with us, you can safely ignore this email.
                         </p>
                         <p style="margin:8px 0 0 0;">
                             © {{ domain }} — All rights reserved

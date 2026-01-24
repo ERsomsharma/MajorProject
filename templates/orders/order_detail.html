@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="section-content padding-y bg">
+<div class="container">
+
+<!-- ============================ COMPONENT 1 ================================= -->
+    <h3 class="text-center mb-5">Order Details</h3>
+
+<div class="row">
+	<aside class="col-lg-8">
+<div class="card">
+    <h5 class="card-header">Order Information</h5>
+    <div class="card-body">
+        <table class="table table-borderless">
+            <tr>
+                <td><strong>Order Number:</strong></td>
+                <td>{{ order_number }}</td>
+            </tr>
+            <tr>
+                <td><strong>Transaction ID:</strong></td>
+                <td>{{ transID }}</td>
+            </tr>
+            <tr>
+                <td><strong>Order Date:</strong></td>
+                <td>{{ order.created_at }}</td>
+            </tr>
+            <tr>
+                <td><strong>Order Status:</strong></td>
+                <td>
+                    <span class="badge {% if order_status == 'New' %}badge-primary{% elif order_status == 'Accepted' %}badge-success{% elif order_status == 'Completed' %}badge-success{% elif order_status == 'Cancelled' %}badge-danger{% else %}badge-secondary{% endif %}">
+                        {{ order_status }}
+                    </span>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div class="card mt-3">
+    <h5 class="card-header">Billing Address</h5>
+    <div class="card-body">
+        <p class="card-text mb-0">{{ order.full_name }}</p>
+        <p class="card-text mb-0">{{ order.full_address }}, {{ order.pincode }}</p>
+        <p class="card-text mb-0">{{ order.city }}, {{ order.state }}</p>
+        <p class="card-text mb-0">{{ order.country }}</p>
+        <p class="card-text mb-0">{{ order.email }}</p>
+        <p class="card-text mb-3">{{ order.phone }}</p>
+        {% if order.order_note %}
+            <b>Order Note: </b> {{ order.order_note }}
+        {% endif %}
+    </div>
+</div>
+
+<div class="card mt-3">
+    <h5 class="card-header">Ordered Products</h5>
+    <div class="card-body">
+        <table class="table table-borderless table-shopping-cart">
+            <thead class="text-muted">
+                <tr class="small text-uppercase">
+                    <th scope="col">Product</th>
+                    <th scope="col" width="120">Quantity</th>
+                    <th scope="col" width="120">Price</th>
+                    <th scope="col" width="120">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in ordered_products %}
+                <tr>
+                    <td>
+                        <figure class="itemside align-items-center">
+                            <div class="aside">
+                                {% if item.product.images.first %}
+                                    <img src="{{ item.product.images.first.image.url }}" class="img-sm">
+                                {% else %}
+                                    <img src="{% static 'images/default_product.png' %}" class="img-sm">
+                                {% endif %}
+                            </div>
+                            <figcaption class="info">
+                                <a href="#" class="title text-dark">{{ item.product.product_name }}</a>
+                                {% if item.variations.all %}
+                                    <p class="text-muted small">
+                                        {% for variation in item.variations.all %}
+                                            {{ variation.variation_category|title }}: {{ variation.variation_value }}<br>
+                                        {% endfor %}
+                                    </p>
+                                {% endif %}
+                            </figcaption>
+                        </figure>
+                    </td>
+                    <td>{{ item.quantity }}</td>
+                    <td>
+                        <div class="price-wrap">
+                            <var class="price">${{ item.product_price }}</var>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="price-wrap">
+                            <var class="price">${{ item.product_price|mul:item.quantity }}</var>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="3" align="right">
+                        <strong>Subtotal:</strong>
+                    </td>
+                    <td>
+                        <strong>${{ subtotal }}</strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3" align="right">
+                        <strong>Tax:</strong>
+                    </td>
+                    <td>
+                        <strong>${{ order.tax }}</strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3" align="right">
+                        <strong>Total:</strong>
+                    </td>
+                    <td>
+                        <strong>${{ order.order_total }}</strong>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card mt-3">
+    <h5 class="card-header">Payment Information</h5>
+    <div class="card-body">
+        <p class="card-text">
+            <strong>Payment Method:</strong> {{ order.payment.payment_method }}
+        </p>
+        <p class="card-text">
+            <strong>Payment Status:</strong>
+            <span class="badge {% if order.payment.status == 'COMPLETED' %}badge-success{% else %}badge-warning{% endif %}">
+                {{ order.payment.status }}
+            </span>
+        </p>
+        <p class="card-text">
+            <strong>Amount Paid:</strong> ${{ order.payment.amount_paid }}
+        </p>
+    </div>
+</div>
+
+	</aside> <!-- col.// -->
+
+	<aside class="col-lg-4">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="card-title">Order Summary</h6>
+                <dl class="dlist-align">
+                    <dt>Subtotal:</dt>
+                    <dd class="text-right">${{ subtotal }}</dd>
+                </dl>
+                <dl class="dlist-align">
+                    <dt>Tax:</dt>
+                    <dd class="text-right">${{ order.tax }}</dd>
+                </dl>
+                <dl class="dlist-align">
+                    <dt>Total:</dt>
+                    <dd class="text-right text-dark b"><strong>${{ order.order_total }}</strong></dd>
+                </dl>
+                <hr>
+                <p class="text-center mb-3">
+                    <img src="{% static 'images/misc/payments.png' %}" height="26">
+                </p>
+            </div> <!-- card-body.// -->
+        </div> <!-- card.// -->
+	</aside> <!-- col.// -->
+</div> <!-- row.// -->
+
+</div> <!-- container .//  -->
+</section>
+<!-- ========================= SECTION CONTENT END// ========================= -->
+
+{% endblock %}

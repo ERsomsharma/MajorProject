@@ -1,0 +1,173 @@
+{% autoescape off %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Received</title>
+</head>
+<body style="margin:0; padding:0; background-color:#f4f6f8; font-family:Arial, Helvetica, sans-serif;">
+
+<table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f6f8; padding:16px 0;">
+    <tr>
+        <td align="center">
+
+            <!-- Container -->
+            <table width="100%" cellpadding="0" cellspacing="0"
+                   style="max-width:600px; background-color:#ffffff;
+                          border-radius:10px; padding:24px;
+                          box-shadow:0 6px 16px rgba(0,0,0,0.08);">
+
+                <!-- Logo -->
+                <tr>
+                    <td align="center" style="padding-bottom:16px;">
+                        <img src="{{ protocol }}://{{ domain }}/static/images/logo.png"
+                             alt="{{ domain }}"
+                             style="max-height:48px;">
+                    </td>
+                </tr>
+
+                <!-- Header -->
+                <tr>
+                    <td align="center" style="padding-bottom:18px;">
+                        <h2 style="margin:0; font-size:22px; color:#1f2937;">
+                            🛒 Order Received
+                        </h2>
+                    </td>
+                </tr>
+
+                <!-- Greeting -->
+                <tr>
+                    <td style="font-size:16px; color:#374151; line-height:1.7;">
+                        <p style="margin:0 0 12px 0;">
+                            Hi <strong>{{ user.get_full_name|default:user.email }}</strong>,
+                        </p>
+                        <p style="margin:0 0 16px 0;">
+                            Thank you for your order! We’ve received it and it’s now being processed.
+                        </p>
+                    </td>
+                </tr>
+
+                <!-- Order Summary -->
+                <tr>
+                    <td style="background-color:#f9fafb; border-radius:8px; padding:16px;">
+                        <table width="100%" cellpadding="0" cellspacing="0"
+                               style="font-size:15px; color:#374151;">
+                            <tr>
+                                <td><strong>Order Number:</strong></td>
+                                <td align="right">{{ order.id }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Order Date:</strong></td>
+                                <td align="right">{{ order.created_at }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Payment Status:</strong></td>
+                                <td align="right">
+                                    <span style="
+                                        padding:4px 10px;
+                                        border-radius:999px;
+                                        font-size:13px;
+                                        font-weight:bold;
+                                        color:#ffffff;
+                                        background-color:
+                                        {% if order.payment_status == 'COMPLETE' %} #16a34a
+                                        {% elif order.payment_status == 'PENDING' %} #f59e0b
+                                        {% else %} #dc2626 {% endif %};
+                                    ">
+                                        {{ order.payment_status }}
+                                    </span>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <!-- Items Table -->
+                <tr>
+                    <td style="padding-top:20px;">
+                        <table width="100%" cellpadding="0" cellspacing="0"
+                               style="border-collapse:collapse; font-size:14px;">
+                            <tr style="background-color:#e5e7eb;">
+                                <th align="left" style="padding:10px;">Item</th>
+                                <th align="center" style="padding:10px;">Qty</th>
+                                <th align="right" style="padding:10px;">Price</th>
+                            </tr>
+
+                            {% for item in order.items.all %}
+                            <tr style="border-bottom:1px solid #e5e7eb;">
+                                <td style="padding:10px;">{{ item.product.name }}</td>
+                                <td align="center" style="padding:10px;">{{ item.quantity }}</td>
+                                <td align="right" style="padding:10px;">{{ item.total_price }}</td>
+                            </tr>
+                            {% endfor %}
+
+                            <tr>
+                                <td colspan="2" align="right" style="padding:12px;">
+                                    <strong>Total</strong>
+                                </td>
+                                <td align="right" style="padding:12px;">
+                                    <strong>{{ order.total_amount }}</strong>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <!-- CTA Button -->
+                <tr>
+                    <td align="center" style="padding:24px 0;">
+                        <a href="{{ protocol }}://{{ domain }}{% url 'order_detail' order.order_number %}"
+                           style="
+                                display:inline-block;
+                                width:100%;
+                                max-width:320px;
+                                text-align:center;
+                                background-color:#2563eb;
+                                color:#ffffff;
+                                text-decoration:none;
+                                padding:14px 0;
+                                font-size:16px;
+                                font-weight:bold;
+                                border-radius:8px;
+                           ">
+                            View Order Details
+                        </a>
+                    </td>
+                </tr>
+
+                <!-- Info -->
+                <tr>
+                    <td style="
+                        background-color:#ecfeff;
+                        border-left:4px solid #06b6d4;
+                        padding:12px;
+                        font-size:14px;
+                        color:#155e75;
+                        line-height:1.5;
+                    ">
+                        📦 <strong>What’s next?</strong><br>
+                        We’ll notify you once your order is shipped.
+                    </td>
+                </tr>
+
+                <!-- Footer -->
+                <tr>
+                    <td style="padding-top:24px; font-size:13px; color:#6b7280; text-align:center;">
+                        <p style="margin:0;">
+                            If you didn’t place this order, please contact support immediately.
+                        </p>
+                        <p style="margin:8px 0 0 0;">
+                            © {{ domain }} — All rights reserved
+                        </p>
+                    </td>
+                </tr>
+
+            </table>
+
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>
+{% endautoescape %}
