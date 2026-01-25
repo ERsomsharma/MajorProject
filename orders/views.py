@@ -10,6 +10,8 @@ from store.models import Product
 from django.core.mail import EmailMultiAlternatives
 from django.utils.html import strip_tags
 from django.template.loader import render_to_string
+from django.conf import settings
+import os
 
 # Create your views here.
 
@@ -60,15 +62,29 @@ def payments(request):
 
     # Send order received email to customer
     mail_subject = 'Thank you for your order!'
+    ordered_products = OrderProduct.objects.filter(order=order)
+    for i in ordered_products:
+        i.total = i.product_price * i.quantity
     message = render_to_string('orders/order_received_email.html', {
         'user': request.user,
         'order': order,
+        'ordered_products': ordered_products,
         'protocol': 'http' if request.is_secure() else 'https',
         'domain': request.get_host(),
     })
     to_email = request.user.email
     email = EmailMultiAlternatives(mail_subject, strip_tags(message), to=[to_email])
     email.attach_alternative(message, "text/html")
+    # Attach logo
+    logo_path = os.path.join(settings.STATIC_ROOT, 'images', 'logo.png')
+    if os.path.exists(logo_path):
+        with open(logo_path, 'rb') as f:
+            email.attach('logo.png', f.read(), 'image/png')
+    # Attach payments image
+    payments_path = os.path.join(settings.STATIC_ROOT, 'images', 'misc', 'payments.png')
+    if os.path.exists(payments_path):
+        with open(payments_path, 'rb') as f:
+            email.attach('payments.png', f.read(), 'image/png')
     email.send()
 
     # Send order number and transaction id back to sendData method via JsonResponse
@@ -180,7 +196,8 @@ def order_detail(request, order_id):
 
     subtotal = 0
     for i in ordered_products:
-        subtotal += i.product_price * i.quantity
+        i.total = i.product_price * i.quantity
+        subtotal += i.total
 
     context = {
         'order': order,

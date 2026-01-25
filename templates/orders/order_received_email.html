@@ -20,7 +20,7 @@
                 <!-- Logo -->
                 <tr>
                     <td align="center" style="padding-bottom:16px;">
-                        <img src="{{ protocol }}://{{ domain }}/static/images/logo.png"
+                        <img src="cid:logo.png"
                              alt="{{ domain }}"
                              style="max-height:48px;">
                     </td>
@@ -54,7 +54,7 @@
                                style="font-size:15px; color:#374151;">
                             <tr>
                                 <td><strong>Order Number:</strong></td>
-                                <td align="right">{{ order.id }}</td>
+                                <td align="right">{{ order.order_number }}</td>
                             </tr>
                             <tr>
                                 <td><strong>Order Date:</strong></td>
@@ -70,11 +70,11 @@
                                         font-weight:bold;
                                         color:#ffffff;
                                         background-color:
-                                        {% if order.payment_status == 'COMPLETE' %} #16a34a
-                                        {% elif order.payment_status == 'PENDING' %} #f59e0b
+                                        {% if order.payment.status == 'COMPLETED' %} #16a34a
+                                        {% elif order.payment.status == 'PENDING' %} #f59e0b
                                         {% else %} #dc2626 {% endif %};
                                     ">
-                                        {{ order.payment_status }}
+                                        {{ order.payment.status }}
                                     </span>
                                 </td>
                             </tr>
@@ -93,11 +93,23 @@
                                 <th align="right" style="padding:10px;">Price</th>
                             </tr>
 
-                            {% for item in order.items.all %}
+                            {% for item in ordered_products %}
                             <tr style="border-bottom:1px solid #e5e7eb;">
-                                <td style="padding:10px;">{{ item.product.name }}</td>
+                                <td style="padding:10px;">
+                                    {% if item.product.images %}
+                                        <img src="{{ protocol }}://{{ domain }}{{ item.product.images.url }}" alt="{{ item.product.product_name }}" style="max-width:50px; max-height:50px; display:inline-block; margin-right:10px;">
+                                    {% endif %}
+                                    {{ item.product.product_name }}
+                                    {% if item.variations.all %}
+                                        <br><small style="color:#6b7280;">
+                                        {% for variation in item.variations.all %}
+                                            {{ variation.variation_category|title }}: {{ variation.variation_value }}
+                                        {% endfor %}
+                                        </small>
+                                    {% endif %}
+                                </td>
                                 <td align="center" style="padding:10px;">{{ item.quantity }}</td>
-                                <td align="right" style="padding:10px;">{{ item.total_price }}</td>
+                                <td align="right" style="padding:10px;">${{ item.total }}</td>
                             </tr>
                             {% endfor %}
 
@@ -106,7 +118,7 @@
                                     <strong>Total</strong>
                                 </td>
                                 <td align="right" style="padding:12px;">
-                                    <strong>{{ order.total_amount }}</strong>
+                                    <strong>${{ order.order_total }}</strong>
                                 </td>
                             </tr>
                         </table>

@@ -17,7 +17,7 @@
         <table class="table table-borderless">
             <tr>
                 <td><strong>Order Number:</strong></td>
-                <td>{{ order.order_number }}</td>
+                <td><b>#</b> {{ order.order_number }}</td>
             </tr>
             <tr>
                 <td><strong>Transaction ID:</strong></td>
@@ -30,7 +30,7 @@
             <tr>
                 <td><strong>Order Status:</strong></td>
                 <td>
-                    <span class="badge {% if order.status == 'New' %}badge-primary{% elif order.status == 'Accepted' %}badge-success{% elif order.status == 'Completed' %}badge-success{% elif order.status == 'Cancelled' %}badge-danger{% else %}badge-secondary{% endif %}">
+                    <span class="badge {% if order_status == 'New' %}badge-primary{% elif order_status == 'Accepted' %}badge-success{% elif order_status == 'Completed' %}badge-success{% elif order_status == 'Cancelled' %}badge-danger{% else %}badge-secondary{% endif %}">
                         {{ order.status }}
                     </span>
                 </td>
@@ -67,7 +67,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for item in ordered_products %}
+                {% for item in order_detail %}
                 <tr>
                     <td>
                         <figure class="itemside align-items-center">
@@ -121,7 +121,7 @@
                 </tr>
                 <tr>
                     <td colspan="3" align="right">
-                        <strong>Total:</strong>
+                        <strong>Grand Total:</strong>
                     </td>
                     <td>
                         <strong>${{ order.order_total }}</strong>
