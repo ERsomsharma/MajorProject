@@ -3,6 +3,50 @@
 
 {% block content %}
 
+<div id="invoice-loading" class="invoice-loading">
+    <div class="invoice-loading-content">
+        <div class="spinner-border text-success" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+        <div class="invoice-loading-text">Generating invoice...</div>
+        <div class="invoice-loading-subtext">Please wait while we prepare your order summary.</div>
+    </div>
+</div>
+
+<style>
+    .invoice-loading {
+        position: fixed;
+        inset: 0;
+        background: rgba(255, 255, 255, 0.95);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+        opacity: 1;
+        transition: opacity 0.4s ease;
+    }
+
+    .invoice-loading.is-hidden {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .invoice-loading-content {
+        text-align: center;
+    }
+
+    .invoice-loading-text {
+        margin-top: 12px;
+        font-weight: 600;
+    }
+
+    .invoice-loading-subtext {
+        margin-top: 6px;
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+</style>
+
 
 <div class="container" style="margin-top: 50px;">
     <center><i class="fas fa-check-circle" style="font-size: 72px;margin-bottom: 20px;color: #28d150;"></i></center>
@@ -114,6 +158,22 @@
         <!-- col-lg-12 end here -->
     </div>
     </div>
+
+	<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const overlay = document.getElementById('invoice-loading');
+            if (!overlay) {
+                return;
+            }
+
+            setTimeout(function() {
+                overlay.classList.add('is-hidden');
+                setTimeout(function() {
+                    overlay.remove();
+                }, 450);
+            }, 2200);
+        });
+    </script>
 
 
 {% endblock %}

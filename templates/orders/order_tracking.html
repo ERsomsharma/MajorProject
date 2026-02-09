@@ -1,0 +1,590 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="section-content padding-y bg">
+    <div class="container">
+        <h3 class="text-center mb-5">Order Tracking</h3>
+
+        {% if error %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Error!</strong> {{ error }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% else %}
+
+        <div class="row">
+            <div class="col-lg-8">
+                <!-- Order Info Card -->
+                <div class="card mb-4 reveal-on-scroll">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Order #{{ order.order_number }}</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Order Date:</strong> {{ order.created_at|date:"M d, Y H:i" }}</p>
+                                <p><strong>Total Amount:</strong> <span class="text-success">${{ order.order_total }}</span></p>
+                                <p><strong>Order Status:</strong>
+                                    <span class="badge {% if order.status == 'Completed' %}bg-success{% elif order.status == 'New' %}bg-primary{% elif order.status == 'Accepted' %}bg-info{% elif order.status == 'Cancelled' %}bg-danger{% else %}bg-secondary{% endif %}">
+                                        {{ order.status }}
+                                    </span>
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Delivery To:</strong> {{ order.full_name }}</p>
+                                <p><strong>Address:</strong> {{ order.full_address }}, {{ order.city }}, {{ order.state }} {{ order.pincode }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tracking Timeline -->
+                <div class="card reveal-on-scroll">
+                    <div class="card-header">
+                        <h5 class="mb-0">Shipment Status</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if tracking_history %}
+                            <div class="timeline">
+                                {% for tracking in tracking_history %}
+                                    <div class="timeline-item {% if forloop.first %}active{% endif %}">
+                                        <div class="timeline-marker {% if tracking.status == 'Delivered' or tracking.status == 'Refund Approved' or tracking.status == 'Return Approved' or tracking.status == 'Returned' %}bg-success{% elif tracking.status == 'Refund Rejected' or tracking.status == 'Cancellation Rejected' or tracking.status == 'Return Rejected' or tracking.status == 'Cancelled' %}bg-danger{% elif tracking.status == 'Refund Requested' or tracking.status == 'Cancellation Requested' or tracking.status == 'Cancellation Approved' or tracking.status == 'Return Requested' %}bg-warning{% elif tracking.status == 'Shipped' or tracking.status == 'Out for Delivery' %}bg-info{% else %}bg-primary{% endif %}">
+                                            <i class="fas {% if tracking.status == 'Order Confirmed' %}fa-check-circle{% elif tracking.status == 'Processing' %}fa-cogs{% elif tracking.status == 'Shipped' %}fa-box{% elif tracking.status == 'Out for Delivery' %}fa-truck{% elif tracking.status == 'Delivered' %}fa-home{% elif tracking.status == 'Refund Requested' %}fa-money-bill-wave{% elif tracking.status == 'Refund Approved' %}fa-check{% elif tracking.status == 'Refund Rejected' %}fa-times{% elif tracking.status == 'Cancellation Requested' %}fa-ban{% elif tracking.status == 'Cancellation Approved' %}fa-check-circle{% elif tracking.status == 'Cancellation Rejected' %}fa-times-circle{% elif tracking.status == 'Return Requested' %}fa-undo{% elif tracking.status == 'Return Approved' %}fa-check{% elif tracking.status == 'Return Rejected' %}fa-times{% elif tracking.status == 'Cancelled' %}fa-times-circle{% elif tracking.status == 'Returned' %}fa-undo{% endif %}"></i>
+                                        </div>
+                                        <div class="timeline-content">
+                                            <h6 class="mb-1">{{ tracking.status }}</h6>
+                                            <p class="text-muted small mb-1">{{ tracking.timestamp|date:"M d, Y H:i" }}</p>
+                                            {% if tracking.location %}
+                                                <p class="small"><i class="fas fa-map-marker-alt"></i> {{ tracking.location }}</p>
+                                            {% endif %}
+                                            {% if tracking.description %}
+                                                <p class="small text-secondary">{{ tracking.description }}</p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                            <style>
+                                .timeline {
+                                    position: relative;
+                                    padding: 10px 0 10px 10px;
+                                }
+
+                                .timeline::before {
+                                    content: '';
+                                    position: absolute;
+                                    left: 16px;
+                                    top: 6px;
+                                    bottom: 6px;
+                                    width: 2px;
+                                    background: #e9ecef;
+                                }
+
+                                .timeline-item {
+                                    position: relative;
+                                    padding-left: 56px;
+                                    margin-bottom: 24px;
+                                    opacity: 0;
+                                    transform: translateY(10px);
+                                    animation: timeline-fade-in 0.5s ease forwards;
+                                }
+
+                                .timeline-item:last-child {
+                                    margin-bottom: 0;
+                                }
+
+                                .timeline-item:nth-child(1) { animation-delay: 0.05s; }
+                                .timeline-item:nth-child(2) { animation-delay: 0.10s; }
+                                .timeline-item:nth-child(3) { animation-delay: 0.15s; }
+                                .timeline-item:nth-child(4) { animation-delay: 0.20s; }
+                                .timeline-item:nth-child(5) { animation-delay: 0.25s; }
+                                .timeline-item:nth-child(6) { animation-delay: 0.30s; }
+
+                                .timeline-marker {
+                                    position: absolute;
+                                    left: 0;
+                                    top: 0;
+                                    width: 32px;
+                                    height: 32px;
+                                    border-radius: 50%;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    color: #fff;
+                                }
+
+                                .timeline-content {
+                                    background: #f8f9fa;
+                                    padding: 15px;
+                                    border-radius: 5px;
+                                    border-top: 3px solid #007bff;
+                                }
+
+                                .timeline-item.active .timeline-content {
+                                    border-top-color: #28a745;
+                                }
+
+                                .timeline-item.active .timeline-marker {
+                                    animation: timeline-pulse 1.6s ease-in-out infinite;
+                                }
+
+                                .reveal-on-scroll {
+                                    opacity: 0;
+                                    transform: translateY(16px);
+                                    transition: opacity 0.4s ease, transform 0.4s ease;
+                                }
+
+                                .reveal-on-scroll.is-visible {
+                                    opacity: 1;
+                                    transform: translateY(0);
+                                }
+
+                                @keyframes timeline-fade-in {
+                                    to {
+                                        opacity: 1;
+                                        transform: translateY(0);
+                                    }
+                                }
+
+                                @keyframes timeline-pulse {
+                                    0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.45); }
+                                    70% { box-shadow: 0 0 0 10px rgba(40, 167, 69, 0); }
+                                    100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
+                                }
+                            </style>
+                        {% else %}
+                            <p>No tracking history available for this order.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <!-- Order Items -->
+                <div class="card reveal-on-scroll">
+                    <div class="card-header">
+                        <h5 class="mb-0">Order Items</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="order-items">
+                            {% for product in order.orderproduct_set.all %}
+                                <div class="order-item" data-product-id="{{ product.id }}">
+                                    <div class="d-flex align-items-start mb-4">
+                                        <img src="{{ product.product.images.url }}" alt="{{ product.product.product_name }}" class="img-sm mr-3" style="width: 60px; height: 60px; object-fit: cover;">
+                                        <div class="flex-grow-1">
+                                            <h6 class="mb-1">{{ product.product.product_name }}</h6>
+                                            <small class="text-muted">Qty: {{ product.quantity }}</small>
+                                            <br>
+                                            <!-- Status Badges -->
+                                            <div class="order-item-badges">
+                                                {% if product.refund_status != 'No Request' %}
+                                                    <span class="badge bg-warning mt-2">Refund: {{ product.refund_status }}</span>
+                                                {% endif %}
+                                                {% if product.cancellation_status != 'Active' %}
+                                                    <span class="badge bg-danger mt-2">{{ product.cancellation_status }}</span>
+                                                {% endif %}
+                                                {% if product.return_status != 'No Request' %}
+                                                    <span class="badge bg-info mt-2">Return: {{ product.return_status }}</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <span class="text-primary">${{ product.product_price }}</span>
+                                    </div>
+
+                                    <!-- Action Buttons -->
+                                    {% if product.cancellation_status == 'Active' and product.refund_status == 'No Request' and product.return_status == 'No Request' %}
+                                    <div class="order-item-actions mt-3 d-flex" style="gap: 8px;">
+                                        <!-- Cancellation Button -->
+                                        {% if not latest_tracking or latest_tracking.status != 'Delivered' %}
+                                            <button type="button" class="btn btn-sm btn-primary btn-cancel" data-product-id="{{ product.id }}" data-product-name="{{ product.product.product_name }}" style="flex: 1;">
+                                                <i class="fas fa-times-circle"></i> Cancel Product
+                                            </button>
+                                        {% endif %}
+
+                                        <!-- Refund Button -->
+                                        {% if order.status == 'Completed' or latest_tracking and latest_tracking.status == 'Delivered' %}
+                                            <button type="button" class="btn btn-sm btn-outline-secondary btn-refund" data-product-id="{{ product.id }}" data-product-name="{{ product.product.product_name }}" style="flex: 1;">
+                                                <i class="fas fa-money-bill-wave"></i> Refund
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-info btn-return" data-product-id="{{ product.id }}" data-product-name="{{ product.product.product_name }}" style="flex: 1;">
+                                                <i class="fas fa-undo"></i> Return
+                                            </button>
+                                        {% endif %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% endif %}
+
+    </div>
+</section>
+
+<!-- Cancellation Confirmation Modal -->
+<div class="modal fade" id="cancellationModal" tabindex="-1" role="dialog" aria-labelledby="cancellationModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="cancellationModalLabel">⚠️ Confirm Product Cancellation</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-3">Are you sure you want to cancel <strong id="cancelProductName"></strong>?</p>
+                <p class="text-muted small">Once cancelled, you will receive a refund if the product is not yet in transit.</p>
+                <div class="form-group mt-3">
+                    <label for="cancellationReason">Reason for Cancellation (Optional):</label>
+                    <textarea class="form-control" id="cancellationReason" rows="3" placeholder="Tell us why you want to cancel this product..."></textarea>
+                </div>
+                <div class="alert alert-info mt-3" role="alert">
+                    <i class="fas fa-info-circle"></i> You will receive a confirmation email shortly.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" id="confirmCancellationBtn">
+                    <i class="fas fa-check"></i> Yes, Cancel Product
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Refund Request Modal -->
+<div class="modal fade" id="refundModal" tabindex="-1" role="dialog" aria-labelledby="refundModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="refundModalLabel">💰 Request Refund</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-3">Request refund for <strong id="refundProductName"></strong>?</p>
+                <p class="text-muted small">Our support team will review your request within 24-48 hours.</p>
+                <div class="form-group mt-3">
+                    <label for="refundReason">Reason for Refund (Optional):</label>
+                    <textarea class="form-control" id="refundReason" rows="3" placeholder="Tell us why you want a refund..."></textarea>
+                </div>
+                <div class="alert alert-success mt-3" role="alert">
+                    <i class="fas fa-envelope"></i> A confirmation email will be sent to your registered email address.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" id="confirmRefundBtn">
+                    <i class="fas fa-check"></i> Request Refund
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Return Request Modal -->
+<div class="modal fade" id="returnModal" tabindex="-1" role="dialog" aria-labelledby="returnModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title" id="returnModalLabel">↩️ Request Return</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-3">Request return for <strong id="returnProductName"></strong>?</p>
+                <p class="text-muted small">We will review your request and share the next steps.</p>
+                <div class="form-group mt-3">
+                    <label for="returnReason">Reason for Return (Optional):</label>
+                    <textarea class="form-control" id="returnReason" rows="3" placeholder="Tell us why you want to return this product..."></textarea>
+                </div>
+                <div class="alert alert-info mt-3" role="alert">
+                    <i class="fas fa-info-circle"></i> You will receive an update shortly.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-info" id="confirmReturnBtn">
+                    <i class="fas fa-check"></i> Request Return
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Global variable to store current product ID
+let currentProductId = null;
+
+// Wait for DOM to be fully loaded
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded, initializing event listeners');
+
+    function updateOrderItemUI(productId, refundStatus, cancellationStatus, returnStatus) {
+        const item = document.querySelector(`.order-item[data-product-id="${productId}"]`);
+        if (!item) {
+            return;
+        }
+
+        const badges = item.querySelector('.order-item-badges');
+        const actions = item.querySelector('.order-item-actions');
+
+        if (badges) {
+            badges.innerHTML = '';
+
+            if (refundStatus && refundStatus !== 'No Request') {
+                const refundBadge = document.createElement('span');
+                refundBadge.className = 'badge bg-warning mt-2';
+                refundBadge.textContent = `Refund: ${refundStatus}`;
+                badges.appendChild(refundBadge);
+            }
+
+            if (cancellationStatus && cancellationStatus !== 'Active') {
+                const cancelBadge = document.createElement('span');
+                cancelBadge.className = 'badge bg-danger mt-2';
+                cancelBadge.textContent = cancellationStatus;
+                badges.appendChild(cancelBadge);
+            }
+
+            if (returnStatus && returnStatus !== 'No Request') {
+                const returnBadge = document.createElement('span');
+                returnBadge.className = 'badge bg-info mt-2';
+                returnBadge.textContent = `Return: ${returnStatus}`;
+                badges.appendChild(returnBadge);
+            }
+        }
+
+        if (actions) {
+            actions.remove();
+        }
+    }
+
+    const revealTargets = document.querySelectorAll('.reveal-on-scroll');
+    if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries, obs) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    obs.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15 });
+
+        revealTargets.forEach(target => observer.observe(target));
+    } else {
+        revealTargets.forEach(target => target.classList.add('is-visible'));
+    }
+
+    // Cancellation Button Click Handler - using event delegation
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.btn-cancel')) {
+            const btn = e.target.closest('.btn-cancel');
+            currentProductId = btn.getAttribute('data-product-id');
+            console.log('Cancellation clicked for product:', currentProductId);
+            document.getElementById('cancelProductName').textContent = btn.getAttribute('data-product-name');
+            document.getElementById('cancellationReason').value = '';
+            $('#cancellationModal').modal('show');
+        }
+    });
+
+    // Refund Button Click Handler - using event delegation
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.btn-refund')) {
+            const btn = e.target.closest('.btn-refund');
+            currentProductId = btn.getAttribute('data-product-id');
+            console.log('Refund clicked for product:', currentProductId);
+            document.getElementById('refundProductName').textContent = btn.getAttribute('data-product-name');
+            document.getElementById('refundReason').value = '';
+            $('#refundModal').modal('show');
+        }
+    });
+
+    // Return Button Click Handler - using event delegation
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.btn-return')) {
+            const btn = e.target.closest('.btn-return');
+            currentProductId = btn.getAttribute('data-product-id');
+            console.log('Return clicked for product:', currentProductId);
+            document.getElementById('returnProductName').textContent = btn.getAttribute('data-product-name');
+            document.getElementById('returnReason').value = '';
+            $('#returnModal').modal('show');
+        }
+    });
+
+    // Confirm Cancellation Button - using event delegation
+    document.addEventListener('click', function(e) {
+        if (e.target && e.target.id === 'confirmCancellationBtn') {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Confirm cancellation clicked');
+
+            if (!currentProductId) {
+                showAlert('danger', 'No product selected. Please try again.');
+                return;
+            }
+
+            const reason = document.getElementById('cancellationReason').value;
+            console.log('Sending cancellation request for product:', currentProductId);
+
+            fetch('{% url "request_cancellation" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({
+                    'order_product_id': currentProductId,
+                    'reason': reason
+                })
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log('Response data:', data);
+
+                $('#cancellationModal').modal('hide');
+
+                if (data.success) {
+                    showAlert('success', data.message);
+                    updateOrderItemUI(currentProductId, null, data.cancellation_status || 'Cancellation Requested', null);
+                    currentProductId = null;
+                } else {
+                    showAlert('danger', data.message || 'Failed to cancel product');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('danger', 'An error occurred. Please try again.');
+            });
+        }
+    });
+
+    // Confirm Refund Button - using event delegation
+    document.addEventListener('click', function(e) {
+        if (e.target && e.target.id === 'confirmRefundBtn') {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Confirm refund clicked');
+
+            if (!currentProductId) {
+                showAlert('danger', 'No product selected. Please try again.');
+                return;
+            }
+
+            const reason = document.getElementById('refundReason').value;
+            console.log('Sending refund request for product:', currentProductId);
+
+            fetch('{% url "request_refund" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({
+                    'order_product_id': currentProductId,
+                                        'reason': reason
+                                })
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log('Response data:', data);
+
+                $('#refundModal').modal('hide');
+
+                if (data.success) {
+                    showAlert('success', data.message);
+                    updateOrderItemUI(currentProductId, data.refund_status || 'Requested', null, null);
+                    currentProductId = null;
+                } else {
+                    showAlert('danger', data.message || 'Failed to request refund');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('danger', 'An error occurred. Please try again.');
+            });
+        }
+    });
+
+    // Confirm Return Button - using event delegation
+    document.addEventListener('click', function(e) {
+        if (e.target && e.target.id === 'confirmReturnBtn') {
+            e.preventDefault();
+            e.stopPropagation();
+
+            if (!currentProductId) {
+                showAlert('danger', 'No product selected. Please try again.');
+                return;
+            }
+
+            const reason = document.getElementById('returnReason').value;
+
+            fetch('{% url "request_return" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({
+                    'order_product_id': currentProductId,
+                    'reason': reason
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                $('#returnModal').modal('hide');
+
+                if (data.success) {
+                    showAlert('success', data.message);
+                    updateOrderItemUI(currentProductId, null, null, data.return_status || 'Requested');
+                    currentProductId = null;
+                } else {
+                    showAlert('danger', data.message || 'Failed to request return');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('danger', 'An error occurred. Please try again.');
+            });
+        }
+    });
+});
+
+// Helper function to show alerts
+function showAlert(type, message) {
+    const icon = type === 'success' ? 'check-circle' : 'exclamation-circle';
+    const alertHtml = `
+        <div class="alert alert-${type} alert-dismissible fade show" role="alert" style="margin-bottom: 20px;">
+            <i class="fas fa-${icon}"></i> ${message}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    `;
+
+    const container = document.querySelector('.container');
+    if (container) {
+        const alertDiv = document.createElement('div');
+        alertDiv.innerHTML = alertHtml;
+        container.insertBefore(alertDiv.firstElementChild, container.firstChild);
+    }
+}
+</script>
+
+{% endblock %}

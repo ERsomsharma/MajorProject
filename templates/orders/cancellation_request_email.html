@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            color: #333;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        .header {
+            background-color: #dc3545;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px 5px 0 0;
+        }
+        .content {
+            background-color: white;
+            padding: 20px;
+            border-left: 4px solid #ffc107;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        .section-title {
+            font-weight: bold;
+            color: #dc3545;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .info-box {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border-left: 4px solid #ffc107;
+        }
+        .product-details {
+            background-color: #fafafa;
+            padding: 15px;
+            border-left: 4px solid #dc3545;
+            margin: 10px 0;
+        }
+        .footer {
+            background-color: #f0f0f0;
+            padding: 15px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            border-radius: 0 0 5px 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>Cancellation Request Received ⚠️</h2>
+        </div>
+
+        <div class="content">
+            <div class="section">
+                <p>Hello <strong>{{ user.first_name }} {{ user.last_name }}</strong>,</p>
+                <p>We have received your product cancellation request. Our team will review this request as soon as possible.</p>
+            </div>
+
+            <div class="info-box">
+                <div class="section-title">📋 Cancellation Request Details</div>
+                <p><strong>Order Number:</strong> {{ order.order_number }}</p>
+                <p><strong>Request Date:</strong> {{ order_product.cancellation_requested_at|date:"M d, Y H:i" }}</p>
+                <p><strong>Status:</strong> <span style="color: #dc3545; font-weight: bold;">Pending Confirmation</span></p>
+            </div>
+
+            <div class="product-details">
+                <div class="section-title">📦 Product Information</div>
+                <p><strong>Product Name:</strong> {{ order_product.product.product_name }}</p>
+                <p><strong>Quantity:</strong> {{ order_product.quantity }}</p>
+                <p><strong>Unit Price:</strong> ${{ order_product.product_price }}</p>
+                <p><strong>Total Value:</strong> <strong style="color: #dc3545;">${{ amount }}</strong></p>
+            </div>
+
+            <div class="section">
+                <div class="section-title">💬 Your Reason</div>
+                <div style="background-color: #fff3cd; padding: 15px; border-radius: 5px;">
+                    {% if reason %}
+                        <p>{{ reason }}</p>
+                    {% else %}
+                        <p><em>No reason provided</em></p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="section" style="background-color: #ffe6e6; padding: 15px; border-radius: 5px; border-left: 4px solid #dc3545;">
+                <div class="section-title">⚠️ Important Information</div>
+                <ul>
+                    <li><strong>Cancellation Confirmation Required:</strong> A confirmation email will be sent once your request is reviewed</li>
+                    <li><strong>Timeline:</strong> Our team will respond within 24-48 hours</li>
+                    <li><strong>Package Status:</strong> If the package is already in transit, cancellation may not be possible</li>
+                    <li><strong>Refund Processing:</strong> If approved, full refund will be processed to your original payment method</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <div class="section-title">❓ What Can You Do?</div>
+                <p>You can track your cancellation request status in your account under "My Orders" → "Track Order".</p>
+                <p>If you need to withdraw this cancellation request, please contact us immediately before it's processed.</p>
+            </div>
+
+            <div class="section" style="text-align: center;">
+                <p style="color: #666; font-size: 12px;">
+                    Request ID: {{ order.order_number }}-CAN-{{ order_product.id }}
+                </p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>&copy; 2026 Your Store. All rights reserved.</p>
+            <p>This is an automated message. Please do not reply directly to this email.</p>
+        </div>
+    </div>
+</body>
+</html>

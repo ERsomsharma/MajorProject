@@ -54,6 +54,26 @@ class Order(models.Model):
         return self.first_name
     
 class OrderProduct(models.Model):
+    REFUND_STATUS = (
+        ('No Request', 'No Request'),
+        ('Requested', 'Requested'),
+        ('Approved', 'Approved'),
+        ('Rejected', 'Rejected'),
+    )
+
+    RETURN_STATUS = (
+        ('No Request', 'No Request'),
+        ('Requested', 'Requested'),
+        ('Approved', 'Approved'),
+        ('Rejected', 'Rejected'),
+    )
+    
+    CANCELLATION_STATUS = (
+        ('Active', 'Active'),
+        ('Cancellation Requested', 'Cancellation Requested'),
+        ('Cancelled', 'Cancelled'),
+    )
+    
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     payment = models.ForeignKey(Payment, on_delete=models.SET_NULL, blank=True, null=True)
     user = models.ForeignKey(Account, on_delete=models.CASCADE)
@@ -62,9 +82,51 @@ class OrderProduct(models.Model):
     quantity = models.IntegerField()
     product_price = models.FloatField()
     ordered = models.BooleanField(default=False)
+    refund_status = models.CharField(max_length=15, choices=REFUND_STATUS, default='No Request')
+    cancellation_status = models.CharField(max_length=25, choices=CANCELLATION_STATUS, default='Active')
+    return_status = models.CharField(max_length=15, choices=RETURN_STATUS, default='No Request')
+    refund_reason = models.TextField(blank=True, null=True)
+    cancellation_reason = models.TextField(blank=True, null=True)
+    return_reason = models.TextField(blank=True, null=True)
+    refund_requested_at = models.DateTimeField(blank=True, null=True)
+    cancellation_requested_at = models.DateTimeField(blank=True, null=True)
+    return_requested_at = models.DateTimeField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.product.product_name
+
+
+class OrderTracking(models.Model):
+    TRACKING_STATUS = (
+        ('Order Confirmed', 'Order Confirmed'),
+        ('Processing', 'Processing'),
+        ('Shipped', 'Shipped'),
+        ('Out for Delivery', 'Out for Delivery'),
+        ('Delivered', 'Delivered'),
+        ('Refund Requested', 'Refund Requested'),
+        ('Refund Approved', 'Refund Approved'),
+        ('Refund Rejected', 'Refund Rejected'),
+        ('Cancellation Requested', 'Cancellation Requested'),
+        ('Cancellation Approved', 'Cancellation Approved'),
+        ('Cancellation Rejected', 'Cancellation Rejected'),
+        ('Return Requested', 'Return Requested'),
+        ('Return Approved', 'Return Approved'),
+        ('Return Rejected', 'Return Rejected'),
+        ('Cancelled', 'Cancelled'),
+        ('Returned', 'Returned'),
+    )
+    
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='tracking_history')
+    status = models.CharField(max_length=30, choices=TRACKING_STATUS)
+    description = models.CharField(max_length=200, blank=True)
+    location = models.CharField(max_length=100, blank=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-timestamp']
+    
+    def __str__(self):
+        return f'{self.order.order_number} - {self.status}'
 

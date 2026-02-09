@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="section-content padding-y bg">
+    <div class="container">
+        <h3 class="text-center mb-5">My Orders</h3>
+
+        {% if orders %}
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Order Number</th>
+                                    <th>Date</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in orders %}
+                                    <tr>
+                                        <td>
+                                            <strong>#{{ order.order_number }}</strong>
+                                        </td>
+                                        <td>{{ order.created_at|date:"M d, Y" }}</td>
+                                        <td>${{ order.order_total }}</td>
+                                        <td>
+                                            <span class="badge {% if order.status == 'Completed' %}bg-success{% elif order.status == 'New' %}bg-primary{% elif order.status == 'Accepted' %}bg-info{% elif order.status == 'Cancelled' %}bg-danger{% else %}bg-secondary{% endif %}">
+                                                {{ order.status }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'order_tracking' order.order_number %}" class="btn btn-sm btn-primary">
+                                                <i class="fas fa-tracking"></i> Track
+                                            </a>
+                                            <a href="{% url 'order_detail' order.order_number %}" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-eye"></i> Details
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="alert alert-info text-center">
+                <i class="fas fa-shopping-bag"></i> You haven't placed any orders yet.
+                <a href="{% url 'store' %}" class="btn btn-sm btn-primary mt-2">Start Shopping</a>
+            </div>
+        {% endif %}
+
+    </div>
+</section>
+
+{% endblock %}

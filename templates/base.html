@@ -12,10 +12,10 @@
 <link href="{% static 'images/favicon.ico' %}" rel="shortcut icon" type="image/x-icon">
 
 <!-- jQuery -->
-<script src="{% static 'js/jquery-2.0.0.min.js' %}" type="text/javascript"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
 <!-- Bootstrap4 files-->
-<script src="{% static 'js/bootstrap.bundle.min.js' %}" type="text/javascript"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet" type="text/css"/>
 
 <!-- Font awesome 5 -->
@@ -26,6 +26,29 @@
 <link href="{% static 'css/custom.css' %}" rel="stylesheet" type="text/css"/>
 <link href="{% static 'css/responsive.css' %}" rel="stylesheet" media="only screen and (max-width: 1200px)" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+    body.page-animate {
+        opacity: 0;
+        transition: opacity 0.35s ease;
+    }
+
+    body.page-animate.is-loaded {
+        opacity: 1;
+    }
+
+    .global-reveal {
+        opacity: 0;
+        transform: translateY(12px);
+        transition: opacity 0.45s ease, transform 0.45s ease;
+        will-change: opacity, transform;
+    }
+
+    .global-reveal.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+</style>
 
 <!-- custom javascript -->
 <script src="{% static 'js/script.js' %}" type="text/javascript"></script>
@@ -46,7 +69,7 @@ $(document).ready(function() {
 
 
 </head>
-<body>
+<body class="page-animate">
 
     <!-- navbar -->
      {% include 'includes/navbar.html' %}
@@ -58,3 +81,45 @@ $(document).ready(function() {
 <!-- footer -->
 
 {% include 'includes/footer.html' %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.body.classList.add('is-loaded');
+
+        const selector = [
+            '.card',
+            '.table',
+            '.alert',
+            '.breadcrumb',
+            '.pagination',
+            '.list-group',
+            '.media',
+            '.section-content',
+            '.order-items',
+            '.invoice',
+            '.banner',
+            '.product'
+        ].join(',');
+
+        const nodes = Array.from(document.querySelectorAll(selector));
+        nodes.forEach((node, index) => {
+            node.classList.add('global-reveal');
+            node.style.transitionDelay = `${Math.min(index * 40, 240)}ms`;
+        });
+
+        if ('IntersectionObserver' in window) {
+            const observer = new IntersectionObserver((entries, obs) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        obs.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.12 });
+
+            nodes.forEach(node => observer.observe(node));
+        } else {
+            nodes.forEach(node => node.classList.add('is-visible'));
+        }
+    });
+</script>

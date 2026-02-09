@@ -4,6 +4,7 @@ from .models import Cart, CartItem
 from store.models import Product, Variation
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
+from accounts.models import UserProfile
 
 # Create your views here.
 def _cart_id(request):
@@ -215,11 +216,20 @@ def checkout(request, total=0,quantity=0,cart_item=None):
     except ObjectDoesNotExist:
         pass #just ignore
 
+    # Auto-fetch user address from profile
+    user_profile = None
+    if request.user.is_authenticated:
+        try:
+            user_profile = UserProfile.objects.get(user=request.user)
+        except UserProfile.DoesNotExist:
+            user_profile = None
+
     context ={
         'total' : total,
         'quantity' : quantity,
         'cart_items' : cart_items,
         'tax' : tax,
-        'grand_total' : grand_total
+        'grand_total' : grand_total,
+        'user_profile': user_profile,  # Pass user profile to template
     }
     return render(request, 'store/checkout.html', context)

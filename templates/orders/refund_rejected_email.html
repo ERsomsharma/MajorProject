@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            color: #333;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        .header {
+            background-color: #dc3545;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px 5px 0 0;
+        }
+        .content {
+            background-color: white;
+            padding: 20px;
+            border-left: 4px solid #dc3545;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        .section-title {
+            font-weight: bold;
+            color: #dc3545;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .info-box {
+            background-color: #ffe0e6;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border-left: 4px solid #dc3545;
+        }
+        .product-details {
+            background-color: #fafafa;
+            padding: 15px;
+            border-left: 4px solid #dc3545;
+            margin: 10px 0;
+        }
+        .footer {
+            background-color: #f0f0f0;
+            padding: 15px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            border-radius: 0 0 5px 5px;
+        }
+        .decision-badge {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #dc3545;
+            color: white;
+            border-radius: 5px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>❌ Refund Request - REJECTED</h2>
+        </div>
+
+        <div class="content">
+            <div class="section">
+                <p>Hello <strong>{{ user.first_name }} {{ user.last_name }}</strong>,</p>
+                <p>Thank you for submitting your refund request. After careful review, our team has made a decision on your request.</p>
+            </div>
+
+            <div class="info-box">
+                <div class="section-title">📋 Decision Details</div>
+                <p><strong>Order Number:</strong> {{ order.order_number }}</p>
+                <p><strong>Decision Date:</strong> {% now "M d, Y H:i" %}</p>
+                <p><strong>Decision Status:</strong> <span class="decision-badge">REJECTED ✗</span></p>
+            </div>
+
+            <div class="product-details">
+                <div class="section-title">📦 Product Information</div>
+                <p><strong>Product Name:</strong> {{ order_product.product.product_name }}</p>
+                <p><strong>Quantity:</strong> {{ order_product.quantity }}</p>
+                <p><strong>Your Reason:</strong></p>
+                <div style="background-color: #fff3cd; padding: 10px; border-radius: 5px; margin-top: 10px;">
+                    {% if order_product.refund_reason %}
+                        <p>{{ order_product.refund_reason }}</p>
+                    {% else %}
+                        <p><em>No reason provided</em></p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">⚠️ Reason for Decision</div>
+                <p>Unfortunately, your refund request does not meet our refund policy criteria. Common reasons for rejection include:</p>
+                <ul>
+                    <li>Item was used or damaged by customer</li>
+                    <li>Refund period has expired (typically 30 days)</li>
+                    <li>Item was purchased as final sale</li>
+                    <li>Insufficient reason provided</li>
+                </ul>
+            </div>
+
+            <div class="section" style="background-color: #f0f0f0; padding: 15px; border-radius: 5px;">
+                <div class="section-title">❓ What Can You Do?</div>
+                <p>If you believe this decision was made in error, or if you have additional information, please contact our support team within 7 days of this email. We're here to help!</p>
+                <p><strong>Email:</strong> support@yourstore.com</p>
+                <p><strong>Phone:</strong> 1-800-XXX-XXXX</p>
+            </div>
+
+            <div class="section" style="text-align: center;">
+                <p style="color: #666; font-size: 12px;">
+                    Rejection ID: {{ order.order_number }}-REF-{{ order_product.id }}-REJECTED
+                </p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>&copy; 2026 Your Store. All rights reserved.</p>
+            <p>This is an automated message. Please do not reply directly to this email.</p>
+        </div>
+    </div>
+</body>
+</html>

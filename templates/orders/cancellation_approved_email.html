@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            color: #333;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        .header {
+            background-color: #28a745;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px 5px 0 0;
+        }
+        .content {
+            background-color: white;
+            padding: 20px;
+            border-left: 4px solid #28a745;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        .section-title {
+            font-weight: bold;
+            color: #28a745;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .info-box {
+            background-color: #f0f8ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border-left: 4px solid #28a745;
+        }
+        .product-details {
+            background-color: #fafafa;
+            padding: 15px;
+            border-left: 4px solid #28a745;
+            margin: 10px 0;
+        }
+        .footer {
+            background-color: #f0f0f0;
+            padding: 15px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            border-radius: 0 0 5px 5px;
+        }
+        .decision-badge {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border-radius: 5px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>✅ Cancellation Request - APPROVED</h2>
+        </div>
+
+        <div class="content">
+            <div class="section">
+                <p>Hello <strong>{{ user.first_name }} {{ user.last_name }}</strong>,</p>
+                <p>Good news! Your cancellation request has been <strong>APPROVED</strong> and your product has been successfully cancelled.</p>
+            </div>
+
+            <div class="info-box">
+                <div class="section-title">📋 Decision Details</div>
+                <p><strong>Order Number:</strong> {{ order.order_number }}</p>
+                <p><strong>Decision Date:</strong> {% now "M d, Y H:i" %}</p>
+                <p><strong>Decision Status:</strong> <span class="decision-badge">APPROVED ✓</span></p>
+            </div>
+
+            <div class="product-details">
+                <div class="section-title">📦 Cancelled Product</div>
+                <p><strong>Product Name:</strong> {{ order_product.product.product_name }}</p>
+                <p><strong>Quantity:</strong> {{ order_product.quantity }}</p>
+                <p><strong>Unit Price:</strong> ${{ order_product.product_price }}</p>
+                <p><strong>Refund Amount:</strong> <span style="color: #28a745; font-weight: bold;">${{ amount }}</span></p>
+            </div>
+
+            <div class="section">
+                <div class="section-title">⏱️ What Happens Next</div>
+                <ol>
+                    <li>Your product cancellation has been processed</li>
+                    <li>A refund for the amount above has been initiated</li>
+                    <li>The refund will be credited to your original payment method</li>
+                    <li>Refunds typically appear in your account within 5-7 business days</li>
+                </ol>
+            </div>
+
+            <div class="section" style="background-color: #f0fff4; padding: 15px; border-radius: 5px;">
+                <div class="section-title">🎉 Thank You!</div>
+                <p>Thank you for notifying us about the cancellation. If you have any questions or need assistance, please don't hesitate to contact our support team.</p>
+            </div>
+
+            <div class="section" style="text-align: center;">
+                <p style="color: #666; font-size: 12px;">
+                    Cancellation Approval ID: {{ order.order_number }}-CANCEL-{{ order_product.id }}
+                </p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>&copy; 2026 Your Store. All rights reserved.</p>
+            <p>This is an automated message. Please do not reply directly to this email.</p>
+        </div>
+    </div>
+</body>
+</html>

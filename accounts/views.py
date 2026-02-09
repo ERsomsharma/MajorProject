@@ -41,6 +41,9 @@ def register(request):
             user.phone_number = phone_number
             user.save()
 
+            # Create UserProfile
+            UserProfile.objects.create(user=user)
+
             #user activation can be added here
             current_site = get_current_site(request)
             mail_subject = 'Please activate your account'
@@ -154,12 +157,13 @@ def dashboard(request):
     orders = Order.objects.order_by('-created_at').filter(user_id=request.user.id, is_ordered=True)
     orders_count = orders.count()
 
-    userprofile = UserProfile.objects.get(user_id=request.user.id)
+    userprofile, created = UserProfile.objects.get_or_create(user=request.user)
 
     context = {
         'orders_count': orders_count,
         'orders': orders,
-        'userprofile' : userprofile
+        'userprofile' : userprofile,
+        'created' : created,
     }
     return render(request, 'accounts/dashboard.html', context)
 

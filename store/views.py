@@ -9,6 +9,7 @@ from django.db.models import Q
 from .forms import ReviewForm
 from django.contrib import messages
 from orders.models import OrderProduct
+from accounts.models import UserProfile
 
 # Create your views here.
 

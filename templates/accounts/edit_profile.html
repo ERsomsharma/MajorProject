@@ -18,7 +18,11 @@
 		</header>
 		<div class="card-body">
             <div class="text-right">
-                <img src="{{ userprofile.profile_picture.url }}" class="rounded-circle border border-dark img-thumbnail" width="100px" height="100px" alt="Profile Picture">
+                {% if userprofile.profile_picture %}
+                    <img src="{{ userprofile.profile_picture.url }}" class="rounded-circle border border-dark img-thumbnail" width="100px" height="100px" alt="Profile Picture">
+                {% else %}
+                    <img src="{% static 'images/avatars/avatar4.png' %}" class="rounded-circle border border-dark img-thumbnail" width="100px" height="100px" alt="Default Profile Picture">
+                {% endif %}
             </div>
 			<div class="row"> 
 				<div class="col-md-12">

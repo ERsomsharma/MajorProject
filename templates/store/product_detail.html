@@ -143,7 +143,11 @@
 			{% for review in reviews %}
 				<article class="box mb-3">
 					<div class="icontext w-100">
-						<img src="{% static './images/avatars/avatar1.jpg' %}" class="img-xs icon rounded-circle">
+						{% if review.user.userprofile.profile_picture %}
+							<img src="{{ review.user.userprofile.profile_picture.url }}" title="userprofile" class="img-xs icon rounded-circle" style="width: 45px; height: 45px; object-fit: cover;">
+						{% else %}
+							<img src="{% static 'images/avatars/avatar1.jpg' %}" title="userprofile" class="img-xs icon rounded-circle" style="width: 45px; height: 45px;">
+						{% endif %}
 						<div class="text">
 							<span class="date text-muted float-md-right">{{ review.updated_at }} </span>
 							<h6 class="mb-1">{{review.user.full_name}} </h6>
